@@ -1,0 +1,176 @@
+# TrailMate - Smart Travel Planning Chatbot
+# AI Agent Orchestration Project
+
+## Project Overview
+This is a smart travel planning chatbot powered by AI agent orchestration with three specialized agents:
+- Accommodation Agent: Finds suitable housing options
+- Experience Planner Agent: Suggests activities and itineraries  
+- Budget Optimizer Agent: Optimizes plans within budget constraints
+
+## Tech Stack
+- **LLM & Inference**: OpenRouter
+- **Agent Orchestration**: OpenAI Agents SDK
+- **Memory**: mem0
+- **Frontend**: Streamlit
+- **Backend**: FastAPI
+- **Database & Auth**: Supabase
+- **Containerization**: Docker
+- **Logging**: Python standard logging
+
+## File Structure
+```
+/agents/           # Accommodation, Experience, Budget Optimizer agents
+/frontend/         # Streamlit frontend code
+/backend/          # FastAPI endpoints & orchestration logic
+/memory/           # mem0 integration
+/database/         # Supabase utilities
+/utils/            # Helper functions, logging setup
+/config/           # Environment and settings files
+/tests/            # Unit and integration tests
+```
+
+## Coding Standards
+
+### Python Code Style
+- Follow PEP 8 style guidelines
+- Use type hints for all function parameters and return types
+- Maximum line length: 88 characters (Black formatter)
+- Use docstrings for all classes and functions
+- Use f-strings for string formatting
+
+### Agent Development Patterns
+- Each agent should be a separate class with clear interfaces
+- Implement async methods for API calls
+- Use structured data classes for inputs/outputs (Pydantic models)
+- Include proper error handling and logging
+- Make agents stateless where possible
+
+### API Integration
+- Use async/await for all external API calls
+- Implement proper rate limiting and retry logic
+- Cache API responses when appropriate
+- Use environment variables for API keys
+- Include proper timeout handling
+
+### Memory Management
+- Use mem0 for conversational memory
+- Implement user-specific memory isolation
+- Clear sensitive data from memory appropriately
+- Link memory to Supabase user IDs
+
+### Database Operations
+- Use Supabase client for all database operations
+- Implement proper connection pooling
+- Use transactions for multi-step operations
+- Include proper error handling for database failures
+
+## Security Guidelines
+- Never commit API keys or sensitive data
+- Use environment variables for all configuration
+- Implement proper authentication checks
+- Validate all user inputs
+- Use HTTPS for all external communications
+- Log security-relevant events
+
+## Testing Requirements
+- Write unit tests for each agent
+- Include integration tests for agent orchestration
+- Test API error scenarios
+- Test memory persistence
+- Test budget optimization edge cases
+- Achieve minimum 80% code coverage
+
+## Logging Standards
+- Use structured logging with JSON format
+- Include correlation IDs for request tracking
+- Log all API calls with response times
+- Log agent decisions and reasoning
+- Include user context in logs (without sensitive data)
+- Use appropriate log levels (DEBUG, INFO, WARNING, ERROR)
+
+## Error Handling
+- Implement graceful degradation for API failures
+- Provide meaningful error messages to users
+- Log all errors with context
+- Implement circuit breaker pattern for external services
+- Have fallback options for critical functionality
+
+## Performance Guidelines
+- Implement caching for frequently accessed data
+- Use connection pooling for database operations
+- Optimize API calls with batching where possible
+- Monitor and log response times
+- Use background tasks for non-blocking operations
+
+## Frontend Guidelines (Streamlit)
+- Keep UI components modular and reusable
+- Implement proper state management
+- Use session state for user data
+- Include loading indicators for long operations
+- Handle errors gracefully in the UI
+
+## Docker Configuration
+- Use multi-stage builds for optimization
+- Include health checks in containers
+- Use non-root user for security
+- Minimize image size
+- Include proper environment variable handling
+
+## Development Workflow
+- Use feature branches for development
+- Include proper commit messages
+- Run tests before committing
+- Use pre-commit hooks for code quality
+- Include documentation updates with code changes
+
+## Agent-Specific Guidelines
+
+### Accommodation Agent
+- Validate date ranges and guest counts
+- Handle multiple accommodation types (hotels, rentals, etc.)
+- Implement price range calculations based on standards
+- Cache popular destination data
+- Include booking link validation
+
+### Experience Planner Agent  
+- Match activities to user interests effectively
+- Consider travel time between activities
+- Validate activity availability for given dates
+- Implement activity ranking algorithms
+- Handle group size requirements
+
+### Budget Optimizer Agent
+- Implement multiple optimization strategies
+- Provide clear trade-off explanations
+- Handle budget constraint violations gracefully
+- Show alternative plans with different priorities
+- Include cost breakdown transparency
+
+## Environment Variables Required
+```
+OPENROUTER_API_KEY=
+SUPABASE_URL=
+SUPABASE_KEY=
+MEM0_API_KEY=
+BOOKING_COM_API_KEY=
+GOOGLE_PLACES_API_KEY=
+VIATOR_API_KEY=
+YELP_API_KEY=
+```
+
+## Documentation Requirements
+- Include API documentation for all endpoints
+- Document agent interfaces and data models
+- Provide setup and deployment instructions
+- Include troubleshooting guides
+- Document configuration options
+
+## Code Review Checklist
+- [ ] Code follows project style guidelines
+- [ ] Proper error handling implemented
+- [ ] Security considerations addressed
+- [ ] Tests included and passing
+- [ ] Documentation updated
+- [ ] Performance impact considered
+- [ ] Logging implemented appropriately
+- [ ] Environment variables used correctly 
