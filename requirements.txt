@@ -5,3 +5,5 @@ groq
 python-dotenv
 openai-agents[litellm]
 googlemaps
+playwright
+playwright install 

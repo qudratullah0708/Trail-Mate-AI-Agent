@@ -191,3 +191,37 @@ graph TD
 - All three agents work in coordination for optimal results
 - Budget optimization is a continuous process
 - User satisfaction is prioritized with feedback loops
+
+
+
+
+## 🚀 How to Run TrailMate
+
+Follow these steps to set up and run the TrailMate Smart Travel Planning Chatbot locally:
+
+### 1. Clone the Repository
+
+### 2. Set Up Environment Variables
+
+- Copy `.sample.env` to `.env`:
+  ```bash
+  cp .sample.env .env
+  ```
+- Fill in all required API keys and configuration values in `.env` (see the "Environment Variables Required" section above).
+
+### 3. Install Dependencies
+
+- It is recommended to use a virtual environment:
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  ```
+- Install Python dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
+Run the agent 
+  ``` 
+   python supervisor_agent.py
+
+   ```
