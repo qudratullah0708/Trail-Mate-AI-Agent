@@ -64,9 +64,11 @@ Return ONLY a JSON object in this format:
   "standard": "economy|standard|luxury"
 }
 
-Convert dates to YYYY-MM-DD ISO format. Budgets should be numbers.
-If information is missing, make reasonable assumptions.
+## Convert dates to YYYY-MM-DD ISO format. Budgets should be numbers.
+## If information is missing, make reasonable assumptions.
+## Do not include any explanations, notes, or markdown formatting. Only output the JSON object.
 """
+
 
 
 def extract_query_data(user_query: str) -> dict:

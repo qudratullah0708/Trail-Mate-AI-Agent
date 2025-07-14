@@ -12,6 +12,11 @@ import json
 from dotenv import load_dotenv
 import time
 from datetime import datetime
+import sys
+
+if sys.platform.startswith("win"):
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 
 # ANSI Color Codes
 class Colors:
@@ -35,22 +40,22 @@ print(MODEL)
 
 # 🔷 User input
 user_query = (
-    "I want a luxury stay in Paris from Aug 10 to Aug 15 for 2 guests, "
+    "I want a luxury stay in Dubai from Aug 10 to Aug 15 for 2 guests, "
     "with an overall trip budget between 1000 and 3000 dollars."
 )
 
 # 🔷 Run extraction + validation
 try:
-   # extracted_data = extract_query_data(user_query)
-    extracted_data = {
-    "destination": "Paris",
-    "check_in": "2025-08-10",
-    "check_out": "2025-08-15",
-    "guests": 2,
-    "min_budget": 1000,
-    "max_budget": 3000,
-    "standard": "luxury"
-}
+    extracted_data = extract_query_data(user_query)
+#     extracted_data = {
+#     "destination": "Dubai",
+#     "check_in": "2025-08-10",
+#     "check_out": "2025-08-15",
+#     "guests": 2,
+#     "min_budget": 1000,
+#     "max_budget": 3000,
+#     "standard": "luxury"
+# }
     print("\n📝 Extracted JSON")
     print(json.dumps(extracted_data, indent=2))
 

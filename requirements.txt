@@ -6,4 +6,6 @@ python-dotenv
 openai-agents[litellm]
 googlemaps
 playwright
-playwright install 
+#playwright install 
+fastapi
+uvicorn
