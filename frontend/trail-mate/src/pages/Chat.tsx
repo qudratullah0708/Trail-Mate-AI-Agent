@@ -49,6 +49,7 @@ import {
 } from 'react-icons/fa';
 import type { ChatMessage, AgentStatus } from '../types';
 import CostBreakdownTable from '../components/common/CostBreakdownTable';
+import ApiService from '../services/api';
 
 interface TripPlan {
   destination: string;
@@ -206,27 +207,13 @@ const ChatPage = () => {
     }
   }, [messages.length]);
 
-  // API call to backend - ONLY real API, no mock fallback
+  // API call to backend - Uses centralized service with fallback
   const callPlanningAPI = async (userInput: string) => {
     try {
       setApiError(null);
-      const response = await fetch('http://127.0.0.1:8000/plan-trip', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: userInput,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log('API Response:', data); // Debug log
-      return data;
+      const response = await ApiService.planTrip({ query: userInput });
+      console.log('API Response:', response); // Debug log
+      return response;
     } catch (error) {
       console.error('API Error:', error);
       setApiError(error instanceof Error ? error.message : 'Unknown error occurred');
@@ -380,13 +367,13 @@ const ChatPage = () => {
 
 I'm having trouble connecting to the travel planning service. This could be because:
 
-• The backend server isn't running
+• Both production and local backend servers are unavailable
 • There's a network connectivity issue
-• The API endpoint is temporarily unavailable
+• The API endpoints are temporarily unavailable
 
 **To resolve this:**
-1. Make sure your FastAPI server is running on http://127.0.0.1:8000
-2. Check your internet connection
+1. Check your internet connection for the production service
+2. For local development, make sure your FastAPI server is running on http://127.0.0.1:8000
 3. Try your request again in a moment
 
 *Error details: ${apiError || 'Unknown error'}*`,
