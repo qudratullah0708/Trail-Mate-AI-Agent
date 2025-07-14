@@ -23,10 +23,11 @@ import {
   GridItem,
   Link,
   Divider,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from '@chakra-ui/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -40,10 +41,6 @@ import {
   FaClock,
   FaStar,
   FaExternalLinkAlt,
-  FaLightbulb,
-  FaPlane,
-  FaUmbrellaBeach,
-  FaMountain,
   FaHeart,
   FaMagic
 } from 'react-icons/fa';
@@ -90,26 +87,7 @@ interface CostItem {
   location?: string;
 }
 
-const exampleQueries = [
-  {
-    icon: FaUmbrellaBeach,
-    title: "Beach Getaway",
-    query: "I want a luxury beach vacation in Maldives from Dec 15-22 for 2 people with a budget of $5000-8000",
-    color: "blue"
-  },
-  {
-    icon: FaMountain,
-    title: "Adventure Trip", 
-    query: "Plan an adventure trip to Switzerland from July 10-17 for 4 people, budget $3000-5000, love hiking and skiing",
-    color: "green"
-  },
-  {
-    icon: FaPlane,
-    title: "City Break",
-    query: "I want to visit Tokyo from March 5-12 for 2 people, budget $2000-4000, interested in culture and food",
-    color: "purple"
-  }
-];
+// Removed exampleQueries as it is no longer used
 
 // Function to extract cost table data from markdown text
 const extractCostTableData = (content: string): CostItem[] => {
@@ -188,21 +166,14 @@ const ChatPage = () => {
   });
   const [currentPlan, setCurrentPlan] = useState<TripPlan | null>(null);
   const [processingProgress, setProcessingProgress] = useState(0);
-  const [showExamples, setShowExamples] = useState(true);
+  // Removed showExamples state – no longer needed
   const [apiError, setApiError] = useState<string | null>(null);
   const [costTableData, setCostTableData] = useState<CostItem[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
 
-  // Theme colors
   const cardBg = useColorModeValue('white', 'gray.800');
-  const userBg = useColorModeValue('brand.500', 'brand.600');
-  const agentBg = useColorModeValue('gray.50', 'gray.700');
-  const textColor = useColorModeValue('gray.800', 'gray.100');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const accentColor = useColorModeValue('brand.50', 'brand.900');
-  const sidebarBg = useColorModeValue('gray.50', 'gray.900');
-
+  const agentMessageBg = useColorModeValue('gray.100', 'gray.700');
   // Enhanced scroll behavior
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -315,7 +286,7 @@ Simply tell me about your dream destination, and I'll orchestrate all three agen
     setInputValue('');
     setIsLoading(true);
     setProcessingProgress(0);
-    setShowExamples(false);
+    // removed setShowExamples – examples feature deprecated
     setApiError(null);
 
     try {
@@ -501,28 +472,18 @@ I'm having trouble connecting to the travel planning service. This could be beca
             position={{ base: "absolute", md: "relative" }}
             zIndex={{ base: 10, md: 1 }}
             width={{ base: "100%", md: "auto" }}
-            bg={useColorModeValue('white', 'gray.800')}
+            bg={cardBg}
             p={2}
             borderRadius="xl"
             shadow="xl"
           >
-            <VStack 
-              spacing={4} 
+            <Flex 
+              direction="column" 
               height="100%" 
               maxHeight="calc(100vh - 200px)" 
-              overflowY="auto"
-              sx={{
-                '&::-webkit-scrollbar': {
-                  width: '4px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  width: '6px',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: useColorModeValue('gray.300', 'gray.600'),
-                  borderRadius: '24px',
-                },
-              }}
+              overflowY="auto" 
+              gap={4}
+              sx={{ scrollbarWidth: 'thin' }}
             >
               
               {/* Agent Status Card - Always Visible */}
@@ -534,9 +495,7 @@ I'm having trouble connecting to the travel planning service. This could be beca
                 transition="all 0.3s ease"
                 borderRadius="xl"
                 overflow="hidden"
-                position="sticky"
-                top={0}
-                zIndex={2}
+                // Removed sticky for better stacking
               >
                 <CardBody p={4}>
                   <VStack spacing={3}>
@@ -710,58 +669,36 @@ I'm having trouble connecting to the travel planning service. This could be beca
                             </VStack>
                           </Box>
                         )}
+                        {/* Add Accordion for cost breakdown */}
+                        <Accordion allowToggle>
+                          <AccordionItem>
+                            <AccordionButton>
+                              <Box flex="1" textAlign="left">
+                                <Text fontSize="sm" fontWeight="semibold">Cost Breakdown</Text>
+                              </Box>
+                              <AccordionIcon />
+                            </AccordionButton>
+                            <AccordionPanel pb={4}>
+                              {costTableData.length > 0 && (
+                                <Box overflowX="auto">
+                                  <CostBreakdownTable
+                                    costItems={costTableData}
+                                    totalCost={calculateTotalCost(costTableData)}
+                                    currency="$"
+                                  />
+                                </Box>
+                              )}
+                            </AccordionPanel>
+                          </AccordionItem>
+                        </Accordion>
                       </VStack>
                     </CardBody>
                   </Card>
                 )}
               </Collapse>
 
-              {/* Cost Breakdown Table - Separate Card */}
-              {costTableData.length > 0 && (
-                <Card 
-                  w="100%" 
-                  bg={cardBg} 
-                  shadow="lg"
-                  borderRadius="xl"
-                  overflow="hidden"
-                  _hover={{ transform: 'translateY(-2px)' }}
-                  transition="all 0.3s ease"
-                >
-                  <CardBody p={4}>
-                    <VStack spacing={3} align="stretch">
-                      <HStack justify="space-between">
-                        <HStack spacing={2}>
-                          <Box
-                            as={FaDollarSign}
-                            color="green.500"
-                            transform="scale(1)"
-                            transition="transform 0.3s ease"
-                            _hover={{ transform: 'scale(1.2)' }}
-                          />
-                          <Text fontWeight="bold" fontSize="md">Cost Breakdown</Text>
-                        </HStack>
-                        <Badge 
-                          colorScheme="green" 
-                          variant="subtle"
-                          px={3}
-                          py={1}
-                          borderRadius="full"
-                        >
-                          ${calculateTotalCost(costTableData)}
-                        </Badge>
-                      </HStack>
-                      <Box overflowX="auto">
-                        <CostBreakdownTable
-                          costItems={costTableData}
-                          totalCost={calculateTotalCost(costTableData)}
-                          currency="$"
-                        />
-                      </Box>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              )}
-            </VStack>
+              {/* Moved cost breakdown to accordion inside trip card */}
+            </Flex>
           </GridItem>
 
           {/* Right Side - Chat Area */}
@@ -774,7 +711,7 @@ I'm having trouble connecting to the travel planning service. This could be beca
                 w="100%"
                 overflowY="auto"
                 borderRadius="xl"
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={cardBg}
                 shadow="lg"
                 p={4}
                 maxHeight="calc(100vh - 320px)"
@@ -816,7 +753,7 @@ I'm having trouble connecting to the travel planning service. This could be beca
                             _hover={{ transform: 'scale(1.1)' }}
                           />
                           <Box
-                            bg={message.role === 'user' ? 'brand.500' : useColorModeValue('gray.100', 'gray.700')}
+                            bg={message.role === 'user' ? 'brand.500' : agentMessageBg}
                             color={message.role === 'user' ? 'white' : 'inherit'}
                             px={4}
                             py={3}
@@ -878,7 +815,7 @@ I'm having trouble connecting to the travel planning service. This could be beca
                             _hover={{ transform: 'scale(1.1)' }}
                           />
                           <Box
-                            bg={useColorModeValue('gray.100', 'gray.700')}
+                            bg={agentMessageBg}
                             px={4}
                             py={3}
                             borderRadius="2xl"
