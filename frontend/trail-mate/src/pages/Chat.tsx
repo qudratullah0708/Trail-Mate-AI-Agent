@@ -42,7 +42,10 @@ import {
   FaStar,
   FaExternalLinkAlt,
   FaHeart,
-  FaMagic
+  FaMagic,
+  FaPlane,
+  FaUmbrellaBeach,
+  FaMountain,
 } from 'react-icons/fa';
 import type { ChatMessage, AgentStatus } from '../types';
 import CostBreakdownTable from '../components/common/CostBreakdownTable';
@@ -86,8 +89,6 @@ interface CostItem {
   cost: number;
   location?: string;
 }
-
-// Removed exampleQueries as it is no longer used
 
 // Function to extract cost table data from markdown text
 const extractCostTableData = (content: string): CostItem[] => {
@@ -197,28 +198,7 @@ const ChatPage = () => {
       const welcomeMessage: ChatMessage = {
         id: '1',
         role: 'agent',
-        content: `✨ **Welcome to your personal travel planning experience!** ✨
-
-🌍 I'm **TrailMate**, your AI-powered travel companion ready to craft extraordinary journeys tailored just for you!
-
-**Meet your dedicated AI travel team:**
-
-🏨 **Accommodation Specialist** 
-   *Discovers perfect stays that match your style and budget*
-
-🎯 **Experience Curator** 
-   *Finds hidden gems and must-see attractions for unforgettable memories*
-
-💰 **Budget Optimizer** 
-   *Maximizes your travel value while keeping costs in check*
-
----
-
-🚀 **Ready to start your adventure?**
-
-Simply tell me about your dream destination, and I'll orchestrate all three agents to create a personalized itinerary that's uniquely yours!
-
-*Whether you're dreaming of tropical beaches, mountain adventures, or vibrant cities - let's make it happen together!* 🌟`,
+        content: "This is a placeholder for the welcome card.", // Content for the welcome card
         timestamp: new Date().toISOString(),
         agentType: 'experience',
       };
@@ -274,6 +254,11 @@ Simply tell me about your dream destination, and I'll orchestrate all three agen
   const handleSendMessage = async (messageText?: string) => {
     const textToSend = messageText || inputValue;
     if (!textToSend.trim()) return;
+
+    // Hide welcome card if it's the first message being sent
+    if (messages.length === 1 && messages[0].id === '1') {
+      setMessages([]);
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -462,7 +447,7 @@ I'm having trouble connecting to the travel planning service. This could be beca
         <Grid 
           templateColumns={{ base: "1fr", md: "300px 1fr" }} 
           gap={6} 
-          height="calc(100vh - 200px)"
+          height="calc(100vh - 120px)"
           position="relative"
         > 
           
@@ -671,7 +656,7 @@ I'm having trouble connecting to the travel planning service. This could be beca
                         )}
                         {/* Add Accordion for cost breakdown */}
                         <Accordion allowToggle>
-                          <AccordionItem>
+                          <AccordionItem border="none">
                             <AccordionButton>
                               <Box flex="1" textAlign="left">
                                 <Text fontSize="sm" fontWeight="semibold">Cost Breakdown</Text>
@@ -702,215 +687,260 @@ I'm having trouble connecting to the travel planning service. This could be beca
           </GridItem>
 
           {/* Right Side - Chat Area */}
-          <GridItem>
-            <VStack spacing={4} height="100%">
-              
-              {/* Chat Messages */}
-              <Box
-                flex="1"
-                w="100%"
-                overflowY="auto"
-                borderRadius="xl"
-                bg={cardBg}
-                shadow="lg"
-                p={4}
-                maxHeight="calc(100vh - 320px)"
-                sx={{
-                  '&::-webkit-scrollbar': {
-                    width: '4px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    width: '6px',
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                    background: useColorModeValue('gray.300', 'gray.600'),
-                    borderRadius: '24px',
-                  },
-                }}
-              >
-                <VStack spacing={4} align="stretch">
-                  {messages.map((message) => (
-                    <Fade 
-                      key={message.id} 
-                      in={true} 
-                      transition={{ enter: { duration: 0.3 } }}
+          <GridItem display="flex" flexDirection="column">
+            
+            {/* Chat Messages */}
+            <Box
+              flex="1"
+              w="100%"
+              overflowY="auto"
+              borderRadius="xl"
+              bg={cardBg}
+              shadow="lg"
+              maxHeight="100%"
+              sx={{
+                '&::-webkit-scrollbar': {
+                  width: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  width: '6px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: useColorModeValue('gray.300', 'gray.600'),
+                  borderRadius: '24px',
+                },
+              }}
+            >
+              <VStack spacing={4} align="stretch" p={4}>
+                {messages.map((message, index) => (
+                  (index === 0 && messages.length === 1) ? (
+                    <Card key={message.id} bg={cardBg} shadow="xl" borderRadius="xl" p={4}>
+                      <CardBody>
+                        <VStack spacing={5}>
+                          <HStack>
+                            <FaMagic size="24px" color="purple" /> 
+                            <Text fontWeight="bold" fontSize="2xl">Welcome to TrailMate!</Text>
+                          </HStack>
+                          <Text textAlign="center" maxW="lg">
+                            I'm your AI-powered travel companion, ready to craft your perfect journey.
+                            To get started, tell me about your dream trip, or pick one of these popular requests:
+                          </Text>
+                          <HStack spacing={4} pt={4}>
+                              <Button 
+                                leftIcon={<FaUmbrellaBeach/>} 
+                                colorScheme="blue" 
+                                variant="outline"
+                                onClick={() => handleSendMessage("I want a luxury beach vacation in Maldives from Dec 15-22 for 2 people with a budget of $5000-8000")}
+                                _hover={{transform: 'translateY(-2px)', shadow: 'md'}}
+                              >
+                                Beach Getaway
+                              </Button>
+                              <Button 
+                                leftIcon={<FaMountain/>} 
+                                colorScheme="green"
+                                variant="outline"
+                                onClick={() => handleSendMessage("Plan an adventure trip to Switzerland from July 10-17 for 4 people, budget $3000-5000, love hiking and skiing")}
+                                _hover={{transform: 'translateY(-2px)', shadow: 'md'}}
+                              >
+                                Adventure Trip
+                              </Button>
+                              <Button 
+                                leftIcon={<FaPlane/>} 
+                                colorScheme="purple"
+                                variant="outline"
+                                onClick={() => handleSendMessage("I want to visit Tokyo from March 5-12 for 2 people, budget $2000-4000, interested in culture and food")}
+                                _hover={{transform: 'translateY(-2px)', shadow: 'md'}}
+                              >
+                                City Break
+                              </Button>
+                          </HStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ) : message.id !== '1' && (
+                  <Fade 
+                    key={message.id} 
+                    in={true} 
+                    transition={{ enter: { duration: 0.3 } }}
+                  >
+                    <Flex
+                      justify={message.role === 'user' ? 'flex-end' : 'flex-start'}
+                      mb={2}
                     >
-                      <Flex
-                        justify={message.role === 'user' ? 'flex-end' : 'flex-start'}
-                        mb={2}
+                      <HStack
+                        maxW="85%"
+                        spacing={3}
+                        flexDirection={message.role === 'user' ? 'row-reverse' : 'row'}
                       >
-                        <HStack
-                          maxW="85%"
-                          spacing={3}
-                          flexDirection={message.role === 'user' ? 'row-reverse' : 'row'}
+                        <Avatar
+                          size="sm"
+                          icon={message.role === 'user' ? <FaUser /> : getAgentIcon(message.agentType)}
+                          bg={message.role === 'user' ? 'brand.500' : 'gray.400'}
+                          p={1}
+                          transition="all 0.2s"
+                          _hover={{ transform: 'scale(1.1)' }}
+                        />
+                        <Box
+                          bg={message.role === 'user' ? 'brand.500' : agentMessageBg}
+                          color={message.role === 'user' ? 'white' : 'inherit'}
+                          px={4}
+                          py={3}
+                          borderRadius="2xl"
+                          shadow="sm"
+                          maxW="100%"
+                          transition="all 0.2s"
+                          _hover={{ transform: 'translateY(-1px)', shadow: 'md' }}
                         >
-                          <Avatar
-                            size="sm"
-                            icon={message.role === 'user' ? <FaUser /> : getAgentIcon(message.agentType)}
-                            bg={message.role === 'user' ? 'brand.500' : 'gray.400'}
-                            p={1}
-                            transition="all 0.2s"
-                            _hover={{ transform: 'scale(1.1)' }}
-                          />
-                          <Box
-                            bg={message.role === 'user' ? 'brand.500' : agentMessageBg}
-                            color={message.role === 'user' ? 'white' : 'inherit'}
-                            px={4}
-                            py={3}
-                            borderRadius="2xl"
-                            shadow="sm"
-                            maxW="100%"
-                            transition="all 0.2s"
-                            _hover={{ transform: 'translateY(-1px)', shadow: 'md' }}
-                          >
-                            {message.agentType && (
-                              <HStack mb={2} spacing={1}>
-                                {getAgentIcon(message.agentType)}
-                                <Text fontSize="xs" opacity={0.8} fontWeight="semibold">
-                                  {message.agentType.toUpperCase()} AGENT
-                                </Text>
-                              </HStack>
-                            )}
-                            <Box 
-                              fontSize="sm" 
-                              lineHeight="1.6"
-                              sx={{
-                                '& p': { mb: 2 },
-                                '& ul': { pl: 4, mb: 2 },
-                                '& li': { mb: 1 },
-                              }}
-                            >
-                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {message.content}
-                              </ReactMarkdown>
-                            </Box>
-                            <Text 
-                              fontSize="xs" 
-                              opacity={0.6} 
-                              mt={2} 
-                              textAlign="right"
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="flex-end"
-                            >
-                              <FaClock style={{ marginRight: '4px' }} />
-                              {new Date(message.timestamp).toLocaleTimeString()}
-                            </Text>
-                          </Box>
-                        </HStack>
-                      </Flex>
-                    </Fade>
-                  ))}
-                  
-                  {/* Loading Message */}
-                  {isLoading && (
-                    <Fade in={isLoading}>
-                      <Flex justify="flex-start">
-                        <HStack spacing={3}>
-                          <Avatar 
-                            size="sm" 
-                            icon={<FaRobot />} 
-                            bg="gray.400"
-                            transition="all 0.2s"
-                            _hover={{ transform: 'scale(1.1)' }}
-                          />
-                          <Box
-                            bg={agentMessageBg}
-                            px={4}
-                            py={3}
-                            borderRadius="2xl"
-                            shadow="sm"
-                            maxW="100%"
-                          >
-                            <VStack spacing={3} align="start">
-                              <HStack>
-                                <Spinner size="sm" color="brand.500" />
-                                <Text fontSize="sm" fontWeight="semibold">
-                                  🔍 Crafting your perfect trip...
-                                </Text>
-                              </HStack>
-                              <Progress
-                                value={processingProgress}
-                                size="sm"
-                                colorScheme="brand"
-                                w="250px"
-                                borderRadius="full"
-                                isAnimated
-                                hasStripe
-                              />
-                              <Text fontSize="xs" opacity={0.7}>
-                                Searching accommodations, activities, and optimizing your budget
+                          {message.agentType && (
+                            <HStack mb={2} spacing={1}>
+                              {getAgentIcon(message.agentType)}
+                              <Text fontSize="xs" opacity={0.8} fontWeight="semibold">
+                                {message.agentType.toUpperCase()} AGENT
                               </Text>
-                            </VStack>
+                            </HStack>
+                          )}
+                          <Box 
+                            fontSize="sm" 
+                            lineHeight="1.6"
+                            sx={{
+                              '& p': { mb: 2 },
+                              '& ul': { pl: 4, mb: 2 },
+                              '& li': { mb: 1 },
+                            }}
+                          >
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {message.content}
+                            </ReactMarkdown>
                           </Box>
-                        </HStack>
-                      </Flex>
-                    </Fade>
-                  )}
-                  <div ref={messagesEndRef} />
-                </VStack>
-              </Box>
+                          <Text 
+                            fontSize="xs" 
+                            opacity={0.6} 
+                            mt={2} 
+                            textAlign="right"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="flex-end"
+                          >
+                            <FaClock style={{ marginRight: '4px' }} />
+                            {new Date(message.timestamp).toLocaleTimeString()}
+                          </Text>
+                        </Box>
+                      </HStack>
+                    </Flex>
+                  </Fade>
+                  )
+                ))}
+                
+                {/* Loading Message */}
+                {isLoading && (
+                  <Fade in={isLoading}>
+                    <Flex justify="flex-start">
+                      <HStack spacing={3}>
+                        <Avatar 
+                          size="sm" 
+                          icon={<FaRobot />} 
+                          bg="gray.400"
+                          transition="all 0.2s"
+                          _hover={{ transform: 'scale(1.1)' }}
+                        />
+                        <Box
+                          bg={agentMessageBg}
+                          px={4}
+                          py={3}
+                          borderRadius="2xl"
+                          shadow="sm"
+                          maxW="100%"
+                        >
+                          <VStack spacing={3} align="start">
+                            <HStack>
+                              <Spinner size="sm" color="brand.500" />
+                              <Text fontSize="sm" fontWeight="semibold">
+                                🔍 Crafting your perfect trip...
+                              </Text>
+                            </HStack>
+                            <Progress
+                              value={processingProgress}
+                              size="sm"
+                              colorScheme="brand"
+                              w="250px"
+                              borderRadius="full"
+                              isAnimated
+                              hasStripe
+                            />
+                            <Text fontSize="xs" opacity={0.7}>
+                              Searching accommodations, activities, and optimizing your budget
+                            </Text>
+                          </VStack>
+                        </Box>
+                      </HStack>
+                    </Flex>
+                  </Fade>
+                )}
+                <div ref={messagesEndRef} />
+              </VStack>
+            </Box>
 
-              {/* Message Input */}
-              <Box w="100%" position="relative">
-                <Card 
-                  bg={cardBg} 
-                  shadow="lg"
-                  borderRadius="xl"
-                  _hover={{ transform: 'translateY(-2px)' }}
-                  transition="all 0.3s ease"
-                >
-                  <CardBody p={4}>
-                    <HStack spacing={3}>
-                      <Textarea
-                        placeholder="✨ Describe your dream trip... (destination, dates, budget, preferences)"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        disabled={isLoading}
-                        resize="none"
-                        rows={2}
-                        borderRadius="xl"
-                        border="2px"
-                        borderColor={useColorModeValue('gray.200', 'gray.600')}
-                        _focus={{ 
-                          borderColor: 'brand.500', 
+            {/* Message Input */}
+            <Box w="100%" position="relative" pt={4} flexShrink={0}>
+              <Card 
+                bg={cardBg} 
+                shadow="lg"
+                borderRadius="xl"
+                _hover={{ transform: 'translateY(-2px)' }}
+                transition="all 0.3s ease"
+              >
+                <CardBody p={4}>
+                  <HStack spacing={3}>
+                    <Textarea
+                      placeholder="✨ Describe your dream trip... (e.g., a sunny beach vacation in Greece for a week)"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      disabled={isLoading}
+                      resize="none"
+                      rows={2}
+                      borderRadius="xl"
+                      border="2px"
+                      borderColor={useColorModeValue('gray.200', 'gray.600')}
+                      _focus={{ 
+                        borderColor: 'brand.500', 
+                        shadow: 'md',
+                        transform: 'translateY(-2px)'
+                      }}
+                      _hover={{
+                        borderColor: 'brand.400'
+                      }}
+                      transition="all 0.2s"
+                      spellCheck="false"
+                    />
+                    <VStack spacing={1}>
+                      <IconButton
+                        aria-label="Send message"
+                        icon={<FaPaperPlane />}
+                        onClick={() => handleSendMessage()}
+                        disabled={isLoading || !inputValue.trim()}
+                        colorScheme="brand"
+                        size="lg"
+                        borderRadius="full"
+                        _hover={{ 
+                          transform: 'translateY(-2px) scale(1.05)',
                           shadow: 'md',
-                          transform: 'translateY(-2px)'
+                          bg: 'brand.600',
+                          color: 'white',
                         }}
-                        _hover={{
-                          borderColor: 'brand.400'
+                        _active={{
+                          transform: 'translateY(0) scale(0.95)'
                         }}
                         transition="all 0.2s"
-                        spellCheck="false"
                       />
-                      <VStack spacing={1}>
-                        <IconButton
-                          aria-label="Send message"
-                          icon={<FaPaperPlane />}
-                          onClick={() => handleSendMessage()}
-                          disabled={isLoading || !inputValue.trim()}
-                          colorScheme="brand"
-                          size="lg"
-                          borderRadius="full"
-                          _hover={{ 
-                            transform: 'translateY(-2px) scale(1.05)',
-                            shadow: 'md'
-                          }}
-                          _active={{
-                            transform: 'translateY(0) scale(0.95)'
-                          }}
-                          transition="all 0.2s"
-                        />
-                        <Text fontSize="xs" color="gray.500">
-                          Enter ↵
-                        </Text>
-                      </VStack>
-                    </HStack>
-                  </CardBody>
-                </Card>
-              </Box>
-            </VStack>
+                      <Text fontSize="xs" color="gray.500">
+                        Enter ↵
+                      </Text>
+                    </VStack>
+                  </HStack>
+                </CardBody>
+              </Card>
+            </Box>
           </GridItem>
         </Grid>
       </Container>
