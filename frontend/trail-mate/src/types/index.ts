@@ -1,4 +1,10 @@
 // Core application types
+import type { Accommodation } from './accommodation';
+import type { Activity } from './activity';
+import type { ItineraryDay } from './itinerary';
+// import type { BudgetItem } from './budget'; // Removed, not used/exported
+
+
 export interface User {
   id: string;
   email: string;
